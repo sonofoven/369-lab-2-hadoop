@@ -68,5 +68,4 @@ public class DateReqs {
 			context.write(hostname, result);
 	   }
 	}
-
 }

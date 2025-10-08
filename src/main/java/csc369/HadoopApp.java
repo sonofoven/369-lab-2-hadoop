@@ -76,10 +76,17 @@ public class HadoopApp {
 		job.setOutputValueClass(DateReqs.OUTPUT_VALUE_CLASS);
 
 	} else if ("BytesInDay".equalsIgnoreCase(otherArgs[0])) { // Part 6
-		job.setReducerClass(BytesInDay.ReducerImpl.class);
+		jobChain = true;
+
 		job.setMapperClass(BytesInDay.MapperImpl.class);
-		job.setOutputKeyClass(BytesInDay.OUTPUT_KEY_CLASS);
-		job.setOutputValueClass(BytesInDay.OUTPUT_VALUE_CLASS);
+		job.setReducerClass(BytesInDay.ReducerImpl.class);
+		job.setOutputKeyClass(BytesInDay.OUTPUT_KEY_CLASS_TEMP);
+		job.setOutputValueClass(BytesInDay.OUTPUT_VALUE_CLASS_TEMP);
+
+		job2.setMapperClass(BytesInDay.MapperImpl2.class);
+		job2.setReducerClass(BytesInDay.ReducerImpl2.class);
+		job2.setOutputKeyClass(BytesInDay.OUTPUT_KEY_CLASS_FINAL);
+		job2.setOutputValueClass(BytesInDay.OUTPUT_VALUE_CLASS_FINAL);
 
 	} else {
 		System.out.println("Unrecognized job: " + otherArgs[0]);
