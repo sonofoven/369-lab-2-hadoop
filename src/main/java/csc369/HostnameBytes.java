@@ -16,17 +16,19 @@ public class HostnameBytes {
     public static final Class OUTPUT_VALUE_CLASS = IntWritable.class;
 
     public static class MapperImpl extends Mapper<LongWritable, Text, Text, IntWritable> {
+	public static final Text matchText = new Text("cpe-203-51-137-224.vic.bigpond.net.au");
+	public final IntWritable bytes = new IntWritable();
+	public final Text hostname = new Text();
 
         @Override
 	protected void map(LongWritable key, Text value,
 			   Context context) throws IOException, InterruptedException {
 	    String[] sa = value.toString().split(" ");
-	    IntWritable bytes = new IntWritable();
-		Text hostname = new Text();
 
 	    hostname.set(sa[0]);
 	    bytes.set(Integer.parseInt(sa[9]));
-		if (hostname.equals("cpe-203-51-137-224.vic.bigpond.net.au")){
+		if (hostname.equals(matchText)){
+			System.out.println(hostname + ": " + bytes);
 	    	context.write(hostname, bytes);
 		}
         }

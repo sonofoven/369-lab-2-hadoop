@@ -25,7 +25,7 @@ public class HadoopApp {
 		Job job2 = new Job(conf, "Job Two");
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
-		fd.delete(new Path(otherArgs[1]), true);
+		fd.delete(new Path(otherArgs[2]), true);
 
 	if (otherArgs.length < 3) {
 		System.out.println("Expected parameters: <job class> <input dir> <output dir>");
