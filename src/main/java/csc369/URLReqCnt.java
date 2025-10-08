@@ -25,9 +25,9 @@ public class URLReqCnt {
 	protected void map(LongWritable key, Text value,
 			   Context context) throws IOException, InterruptedException {
 	    String[] sa = value.toString().split(" ");
-	    Text hostname = new Text();
-	    hostname.set(sa[0]);
-	    context.write(hostname, one);
+	    Text url = new Text();
+	    url.set(sa[6]);
+	    context.write(url, one);
         }
     }
 
@@ -35,7 +35,7 @@ public class URLReqCnt {
 	private IntWritable result = new IntWritable();
     
         @Override
-	protected void reduce(Text hostname, Iterable<IntWritable> intOne,
+	protected void reduce(Text url, Iterable<IntWritable> intOne,
 			      Context context) throws IOException, InterruptedException {
             int sum = 0;
             Iterator<IntWritable> itr = intOne.iterator();
@@ -44,7 +44,7 @@ public class URLReqCnt {
                 sum  += itr.next().get();
             }
             result.set(sum);
-            context.write(result, hostname);
+            context.write(result, url);
        }
     }
 
@@ -56,23 +56,23 @@ public class URLReqCnt {
 	protected void map(LongWritable key, Text value,
 			   Context context) throws IOException, InterruptedException {
 	    String[] sa = value.toString().split("\\s+");
-	    Text hostname = new Text();
-	    hostname.set(sa[1]);
+	    Text url = new Text();
+	    url.set(sa[1]);
 	    count.set(Integer.parseInt(sa[0]));
-	    context.write(count, hostname);
+	    context.write(count, url);
         }
     }
 
     public static class ReducerImpl2 extends Reducer<IntWritable, Text, IntWritable, Text> {
     
         @Override
-	protected void reduce(IntWritable count, Iterable<Text> hostnames,
+	protected void reduce(IntWritable count, Iterable<Text> urls,
 			      Context context) throws IOException, InterruptedException {
 
-			Text hostname = new Text();
-			for (Text h : hostnames){
-				hostname.set(h);
-            	context.write(count, hostname);
+			Text url = new Text();
+			for (Text h : urls){
+				url.set(h);
+            	context.write(count, url);
 			}
        }
     }

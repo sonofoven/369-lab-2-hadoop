@@ -57,10 +57,17 @@ public class HadoopApp {
 		job.setOutputValueClass(HostnameBytes.OUTPUT_VALUE_CLASS);
 
 	} else if ("URLClientVisitCnt".equalsIgnoreCase(otherArgs[0])) { // Part 4
-		job.setReducerClass(URLClientVisitCnt.ReducerImpl.class);
+		jobChain = true;
+
 		job.setMapperClass(URLClientVisitCnt.MapperImpl.class);
-		job.setOutputKeyClass(URLClientVisitCnt.OUTPUT_KEY_CLASS);
-		job.setOutputValueClass(URLClientVisitCnt.OUTPUT_VALUE_CLASS);
+		job.setReducerClass(URLClientVisitCnt.ReducerImpl.class);
+		job.setOutputKeyClass(URLClientVisitCnt.OUTPUT_KEY_CLASS_TEMP);
+		job.setOutputValueClass(URLClientVisitCnt.OUTPUT_VALUE_CLASS_TEMP);
+
+		job2.setMapperClass(URLClientVisitCnt.MapperImpl2.class);
+		job2.setReducerClass(URLClientVisitCnt.ReducerImpl2.class);
+		job2.setOutputKeyClass(URLClientVisitCnt.OUTPUT_KEY_CLASS_FINAL);
+		job2.setOutputValueClass(URLClientVisitCnt.OUTPUT_VALUE_CLASS_FINAL);
 
 	} else if ("DateReqs".equalsIgnoreCase(otherArgs[0])) { // Part 5
 		job.setReducerClass(DateReqs.ReducerImpl.class);
