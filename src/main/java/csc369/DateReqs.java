@@ -12,37 +12,61 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 public class DateReqs {
 
-    public static final Class OUTPUT_KEY_CLASS = IntWritable.class;
-    public static final Class OUTPUT_VALUE_CLASS = IntWritable.class;
+	public static final Class OUTPUT_KEY_CLASS = Text.class;
+	public static final Class OUTPUT_VALUE_CLASS = IntWritable.class;
 
-    public static class MapperImpl extends Mapper<LongWritable, Text, IntWritable, IntWritable> {
+	public static class MapperImpl extends Mapper<LongWritable, Text, Text, IntWritable> {
 	private final IntWritable one = new IntWritable(1);
+	private final Text dateText = new Text();
 
-        @Override
+		@Override
 	protected void map(LongWritable key, Text value,
 			   Context context) throws IOException, InterruptedException {
-	    String[] sa = value.toString().split(" ");
-	    IntWritable code = new IntWritable();
-	    code.set(Integer.parseInt(sa[8]));
-	    context.write(code, one);
-        }
-    }
 
-    public static class ReducerImpl extends Reducer<IntWritable, IntWritable, IntWritable, IntWritable> {
+		String line = value.toString();
+
+		int start = line.indexOf('[') + 1;
+		int end = line.indexOf(':', start);
+		String date = line.substring(start, end);
+		
+		String[] dateParts = date.split("/");
+
+		String month = dateParts[1];
+		String year = dateParts[2];
+
+		String[] months = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+
+		int monthNum = 0;
+
+		for (int i = 0; i < months.length; i++) {
+			if (months[i].equalsIgnoreCase(month)) {
+				monthNum = i + 1;
+				break;
+			}
+		}
+
+		String dateConcat = String.format("%s-%02d", year, monthNum);
+		dateText.set(dateConcat);
+
+		context.write(dateText, one);
+		}
+	}
+
+	public static class ReducerImpl extends Reducer<Text, IntWritable, Text, IntWritable> {
 	private IntWritable result = new IntWritable();
-    
-        @Override
-	protected void reduce(IntWritable code, Iterable<IntWritable> intOne,
-			      Context context) throws IOException, InterruptedException {
-            int sum = 0;
-            Iterator<IntWritable> itr = intOne.iterator();
-        
-            while (itr.hasNext()){
-                sum  += itr.next().get();
-            }
-            result.set(sum);
-            context.write(code, result);
-       }
-    }
+	
+		@Override
+	protected void reduce(Text hostname, Iterable<IntWritable> bytes,
+				  Context context) throws IOException, InterruptedException {
+			int totBytes = 0;
+			Iterator<IntWritable> itr = bytes.iterator();
+		
+			while (itr.hasNext()){
+				totBytes += itr.next().get();
+			}
+			result.set(totBytes);
+			context.write(hostname, result);
+	   }
+	}
 
 }
