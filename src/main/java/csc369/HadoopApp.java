@@ -20,18 +20,18 @@ public class HadoopApp {
 		Configuration conf = new Configuration();
 		FileSystem fd = FileSystem.get(conf);
 
-
-
 		Job job = new Job(conf, "Job One");
 		Boolean jobChain = false;
 		Job job2 = new Job(conf, "Job Two");
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
+		fd.delete(new Path(otherArgs[1]), true);
+
 	if (otherArgs.length < 3) {
 		System.out.println("Expected parameters: <job class> <input dir> <output dir>");
 		System.exit(-1);
 
-	} else if ("URLReqCnt".equalsIgnoreCase(otherArgs[0])) { // Part 1
+	} else if ("URLReqCnt".equalsIgnoreCase(otherArgs[0])) { // Part 1 //
 		jobChain = true;
 
 		job.setMapperClass(URLReqCnt.MapperImpl.class);
@@ -44,17 +44,36 @@ public class HadoopApp {
 		job2.setOutputKeyClass(URLReqCnt.OUTPUT_KEY_CLASS_FINAL);
 		job2.setOutputValueClass(URLReqCnt.OUTPUT_VALUE_CLASS_FINAL);
 
-	} else if ("CodeReqCnt".equalsIgnoreCase(otherArgs[0])) { // Part 2
+	} else if ("CodeReqCnt".equalsIgnoreCase(otherArgs[0])) { // Part 2 //
 		job.setReducerClass(CodeReqCnt.ReducerImpl.class);
 		job.setMapperClass(CodeReqCnt.MapperImpl.class);
 		job.setOutputKeyClass(CodeReqCnt.OUTPUT_KEY_CLASS);
 		job.setOutputValueClass(CodeReqCnt.OUTPUT_VALUE_CLASS);
 
-	} else if ("AccessLog2".equalsIgnoreCase(otherArgs[0])) {
-		job.setReducerClass(AccessLog2.ReducerImpl.class);
-		job.setMapperClass(AccessLog2.MapperImpl.class);
-		job.setOutputKeyClass(AccessLog2.OUTPUT_KEY_CLASS);
-		job.setOutputValueClass(AccessLog2.OUTPUT_VALUE_CLASS);
+	} else if ("HostnameBytes".equalsIgnoreCase(otherArgs[0])) { // Part 3
+		job.setReducerClass(HostnameBytes.ReducerImpl.class);
+		job.setMapperClass(HostnameBytes.MapperImpl.class);
+		job.setOutputKeyClass(HostnameBytes.OUTPUT_KEY_CLASS);
+		job.setOutputValueClass(HostnameBytes.OUTPUT_VALUE_CLASS);
+
+	} else if ("URLClientVisitCnt".equalsIgnoreCase(otherArgs[0])) { // Part 4
+		job.setReducerClass(URLClientVisitCnt.ReducerImpl.class);
+		job.setMapperClass(URLClientVisitCnt.MapperImpl.class);
+		job.setOutputKeyClass(URLClientVisitCnt.OUTPUT_KEY_CLASS);
+		job.setOutputValueClass(URLClientVisitCnt.OUTPUT_VALUE_CLASS);
+
+	} else if ("DateReqs".equalsIgnoreCase(otherArgs[0])) { // Part 5
+		job.setReducerClass(DateReqs.ReducerImpl.class);
+		job.setMapperClass(DateReqs.MapperImpl.class);
+		job.setOutputKeyClass(DateReqs.OUTPUT_KEY_CLASS);
+		job.setOutputValueClass(DateReqs.OUTPUT_VALUE_CLASS);
+
+	} else if ("BytesInDay".equalsIgnoreCase(otherArgs[0])) { // Part 6
+		job.setReducerClass(BytesInDay.ReducerImpl.class);
+		job.setMapperClass(BytesInDay.MapperImpl.class);
+		job.setOutputKeyClass(BytesInDay.OUTPUT_KEY_CLASS);
+		job.setOutputValueClass(BytesInDay.OUTPUT_VALUE_CLASS);
+
 	} else {
 		System.out.println("Unrecognized job: " + otherArgs[0]);
 		System.exit(-1);
