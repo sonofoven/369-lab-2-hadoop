@@ -11,3 +11,4 @@ This will compile all code, configure a local Hadoop instance and run the reques
 
 For example:
 `./gradlew run --args="AccessLog input_access_log out_test"`
+
